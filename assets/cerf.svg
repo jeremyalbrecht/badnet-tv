@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 240 250" fill="currentColor" color="#0a1f44">
+  <g id="half">
+    <path fill-rule="evenodd" d="M120 104 L96 104 L84 118 L92 160 L103 214 Q110 236 120 236 Z
+      M100 146 L88 134 L108 141 L110 149 Z
+      M120 216 L108 212 L112 222 L120 226 Z"/>
+    <path d="M82 114 L38 98 Q44 124 60 130 L86 134 Z"/>
+    <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke-width="11" d="M100 102 C96 80 74 80 62 62 C52 46 54 28 64 8"/>
+      <path stroke-width="9" d="M84 82 C72 86 54 84 38 70"/>
+      <path stroke-width="9" d="M62 62 C48 62 32 54 20 36"/>
+      <path stroke-width="8" d="M56 38 C46 34 40 24 38 12"/>
+      <path stroke-width="8" d="M62 34 C72 32 82 26 88 14"/>
+    </g>
+  </g>
+  <use xlink:href="#half" href="#half" transform="matrix(-1 0 0 1 240 0)"/>
+</svg>

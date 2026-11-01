@@ -1,0 +1,282 @@
+<title>Tapis de Court</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Stencil:wght@800&display=swap">
+<style>
+/* Layout: the hall from above. Blue courts on a navy floor, assembly point along the right wall. */
+:root {
+  color-scheme: dark;
+  --floor: #0a1f44; --floor-deep: #071631; --mat: #006fd6; --mat-free: #0f3468;
+  --tape: #ffffff; --tape-soft: #cfe5ff; --club: #0080f4; --star: #ffd23f; --ok: #3ddc84; --warn: #ffb020; --lost: #c8102e;
+  --stencil: "Big Shoulders Stencil", "Barlow Condensed", "Arial Narrow", sans-serif;
+  --label: "Barlow Condensed", "Arial Narrow", sans-serif;
+  --u: min(calc(100vw / 192), calc(100vh / 108));
+  --pad-x: max(calc(1.6 * var(--u)), env(safe-area-inset-left, 0px));
+}
+:root[data-season="noel"] { --floor: #0b1b33; --floor-deep: #071225; --mat: #0f5c43; --mat-free: #143a3a; --club: #c8102e }
+* { box-sizing: border-box }
+[hidden] { display: none !important }
+html, body { height: 100%; margin: 0 }
+body { background: var(--floor-deep); color: var(--tape); font-family: var(--label); font-weight: 600; overflow: hidden }
+::selection { background: var(--tape); color: var(--floor) }
+.hall { height: 100%; display: grid; grid-template-rows: auto minmax(0, 1fr); gap: calc(1.2 * var(--u));
+  padding-block: calc(1.4 * var(--u)); padding-left: var(--pad-x);
+  padding-right: max(calc(1.6 * var(--u)), env(safe-area-inset-right, 0px)); max-width: calc(192 * var(--u)); margin: 0 auto }
+
+.strip { display: flex; align-items: center; gap: calc(2.4 * var(--u)); min-width: 0 }
+.logo { width: calc(13.6 * var(--u)); aspect-ratio: 299 / 177; flex: none; background: var(--tape);
+  -webkit-mask: var(--logo) center / contain no-repeat; mask: var(--logo) center / contain no-repeat }
+.strip h1 { font-size: calc(4.2 * var(--u)); font-weight: 700; line-height: 1; margin: 0; text-transform: uppercase; letter-spacing: .01em }
+.strip p { margin: 0; font-size: calc(2.3 * var(--u)); color: var(--tape-soft); font-weight: 500 }
+.right { margin-left: auto; display: flex; align-items: center; gap: calc(2.8 * var(--u)) }
+.drift { font-size: calc(2.5 * var(--u)) }
+.preview { font-size: calc(1.9 * var(--u)); color: var(--tape-soft); font-weight: 500 }
+.clock { font-weight: 700; font-size: calc(6 * var(--u)); line-height: .9; font-variant-numeric: tabular-nums }
+
+.floor { display: grid; grid-template-rows: minmax(0, 1fr) auto; gap: calc(1.2 * var(--u)); min-height: 0 }
+.courts { display: grid; grid-template-columns: repeat(var(--courts, 5), minmax(0, 1fr)); gap: calc(1.2 * var(--u)); min-height: 0 }
+
+.court { position: relative; background: var(--mat); overflow: hidden; display: grid;
+  grid-template-rows: calc(7.6 * var(--u)) minmax(0, 1fr); padding: calc(.7 * var(--u)) calc(1.3 * var(--u)) calc(.8 * var(--u));
+  transition: background-color .6s cubic-bezier(.16, 1, .3, 1) }
+.court.free { background: var(--mat-free) }
+.lines, .arc { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none }
+.lines line, .lines rect { fill: none; stroke: var(--tape); stroke-width: 2; vector-effect: non-scaling-stroke }
+.lines .in { opacity: .26 }
+.lines .out { opacity: .9; stroke-width: 3 }
+.free .lines { opacity: .45 }
+
+.top, .play { position: relative }
+.top { display: grid; grid-template-columns: auto auto minmax(0, 1fr); align-items: center; gap: calc(.9 * var(--u)) }
+.num { font-family: var(--stencil); font-weight: 800; font-size: calc(7.4 * var(--u)); line-height: 1 }
+.jump { --j: calc(3.5 * var(--u)); display: inline-block; width: var(--j); height: calc(var(--j) * 1.4); flex: none; background: currentColor;
+  -webkit-mask: var(--logo) 0 calc(var(--j) * -.3) / calc(var(--j) * 2.99) auto no-repeat; mask: var(--logo) 0 calc(var(--j) * -.3) / calc(var(--j) * 2.99) auto no-repeat }
+.court.club .lines .out { stroke: var(--star); stroke-width: 6; opacity: 1 }
+.court.club .num { color: var(--star) }
+.meta { display: grid; justify-items: end; text-align: right; min-width: 0 }
+.tag { font-size: calc(2.5 * var(--u)); font-weight: 700; white-space: nowrap }
+.tag span { font-weight: 500 }
+.time { font-size: calc(2.2 * var(--u)); font-weight: 500; font-variant-numeric: tabular-nums; white-space: nowrap }
+
+.play { display: grid; grid-template-rows: minmax(0, 1fr) auto minmax(0, 1fr); min-height: 0; margin-inline: calc(-1.3 * var(--u)) }
+.pair { display: grid; align-content: center; gap: calc(1.4 * var(--u)); min-width: 0; padding-inline: calc(1.3 * var(--u)); transition: opacity .6s }
+.who { display: grid; min-width: 0 }
+.name { font-size: calc(3.7 * var(--u)); font-weight: 700; line-height: 1.04; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis }
+.name.long { font-size: calc(3 * var(--u)) }
+.name i { font-style: normal; font-weight: 500; text-transform: none }
+.who.ours { background: var(--star); color: var(--floor); margin-inline: calc(-1.3 * var(--u)); padding: calc(.5 * var(--u)) calc(1.3 * var(--u));
+  grid-template-columns: auto minmax(0, 1fr); column-gap: calc(1 * var(--u)); align-items: center }
+.who.ours .jump { grid-row: span 2 }
+.pair.win { background: var(--tape); color: var(--floor); animation: flood .9s cubic-bezier(.16, 1, .3, 1) both }
+.pair.a.win { --from: inset(100% 0 0 0) }
+.pair.b.win { --from: inset(0 0 100% 0) }
+.pair.win.ourspair { background: var(--star) }
+@keyframes flood { from { clip-path: var(--from) } to { clip-path: inset(0) } }
+.info { font-size: calc(2.1 * var(--u)); font-weight: 500; line-height: 1.12; white-space: nowrap; overflow: hidden }
+.done .pair.lost { opacity: .5 }
+.pair.solo .name { font-size: calc(4.8 * var(--u)) }
+.pair.solo .info { font-size: calc(2.5 * var(--u)) }
+.reason { color: var(--warn) }
+
+.net { background: var(--floor); display: grid; grid-auto-flow: column; grid-auto-columns: auto; justify-content: space-between; align-items: center;
+  gap: calc(1.6 * var(--u)); padding: calc(.5 * var(--u)) calc(2 * var(--u)); min-height: calc(17.2 * var(--u)) }
+.clockbox { display: grid; justify-items: start; line-height: 1 }
+.elapsed { font-size: calc(3.4 * var(--u)); font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap }
+.status { font-size: calc(2.1 * var(--u)); font-weight: 500; color: var(--tape-soft); margin-top: calc(.4 * var(--u)) }
+.sets { display: flex; align-items: center; gap: calc(1.2 * var(--u)) }
+.noscore { justify-content: center }
+.noscore .clockbox { justify-items: center }
+.noscore .elapsed { font-size: calc(7.6 * var(--u)) }
+.noscore .status { font-size: calc(2.6 * var(--u)) }
+.done .elapsed { font-size: calc(4.6 * var(--u)) }
+.set { display: grid; grid-template-rows: 1fr 1fr; justify-items: center; font-variant-numeric: tabular-nums; perspective: 300px }
+.set b { font-weight: 600; font-size: calc(3.4 * var(--u)); color: var(--tape-soft); line-height: 1.2; padding-inline: calc(.2 * var(--u)) }
+.set.now b { font-weight: 700; font-size: calc(7.6 * var(--u)); color: var(--tape); line-height: 1.04; min-width: calc(8.4 * var(--u)); text-align: center }
+.set b + b { border-top: 2px solid rgba(255, 255, 255, .4); width: 100% ; text-align: center }
+.set b.flip { animation: flip .42s cubic-bezier(.16, 1, .3, 1); transform-origin: 50% 50% }
+@keyframes flip { from { transform: rotateX(-88deg) } to { transform: rotateX(0) } }
+.result { text-align: center; font-size: calc(2.1 * var(--u)); font-weight: 700; text-transform: uppercase }
+
+.freeMark { position: absolute; inset: 0; display: grid; place-items: center; font-size: calc(3 * var(--u)); color: var(--tape-soft); text-transform: uppercase; letter-spacing: .06em }
+.arc path { fill: none; stroke-linecap: round; vector-effect: non-scaling-stroke; stroke-dasharray: 1; stroke-dashoffset: 1; opacity: 0 }
+.arc path.a { stroke: var(--tape); stroke-width: 4 }
+.arc path.b { stroke: var(--tape-soft); stroke-width: 2 }
+.arc path.go { animation: rally .9s cubic-bezier(.16, 1, .3, 1) }
+@keyframes rally { 0% { stroke-dashoffset: 1; opacity: 1 } 60% { stroke-dashoffset: 0; opacity: 1 } 100% { stroke-dashoffset: -1; opacity: 0 } }
+
+.assembly { background: var(--floor); display: grid; grid-template-columns: calc(24 * var(--u)) minmax(0, 1.25fr) minmax(0, 3fr); align-items: stretch; min-height: 0; overflow: hidden }
+.assembly h2 { margin: 0; align-self: center; font-size: calc(3.5 * var(--u)); font-weight: 700; line-height: 1.02; text-transform: uppercase; padding-inline: calc(1.8 * var(--u)) }
+.call { padding: calc(1 * var(--u)) calc(1.6 * var(--u)) calc(1.2 * var(--u)); display: grid; align-content: start; gap: calc(.3 * var(--u)); min-width: 0; height: 100% }
+.call .ref { display: flex; justify-content: space-between; align-items: center; gap: calc(1 * var(--u)); font-size: calc(2.2 * var(--u)); white-space: nowrap }
+.call .ref b { font-weight: 700; font-size: calc(3.4 * var(--u)); line-height: 1 }
+.call .line { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis }
+.call .line i { font-style: normal; font-weight: 500; text-transform: none }
+.track { display: inline-block; white-space: nowrap }
+.slides { text-overflow: clip }
+.slides .track { animation: slide var(--slide) ease-in-out infinite }
+@keyframes slide { 0%, 18% { transform: translateX(0) } 50%, 68% { transform: translateX(var(--shift)) } 100% { transform: translateX(0) } }
+.call .who { display: block; font-size: calc(2.65 * var(--u)); font-weight: 700; line-height: 1.12; text-transform: uppercase; white-space: nowrap; overflow: hidden }
+.call .vs { display: block; font-size: calc(1.8 * var(--u)); font-weight: 500; text-transform: none; line-height: 1.1 }
+.call .mine { display: inline-flex; align-items: center; gap: calc(.4 * var(--u)); background: var(--star); color: var(--floor); padding-inline: calc(.5 * var(--u)) }
+.call .mine .jump { --j: calc(1.6 * var(--u)) }
+.call.first { background: var(--tape); color: var(--floor) }
+#first { min-width: 0 }
+.assembly.idle { grid-template-columns: calc(24 * var(--u)) minmax(0, 1fr) }
+.assembly.idle .queue { display: none }
+.idleText { margin: 0; display: flex; align-items: center; height: 100%; min-height: calc(13 * var(--u)); padding-inline: calc(2.4 * var(--u)); font-size: calc(4 * var(--u)); font-weight: 600; color: var(--tape-soft) }
+.queue { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); min-height: 0; overflow: hidden }
+.queue .call + .call { border-left: 2px solid rgba(255, 255, 255, .28) }
+.enter { animation: enter .7s cubic-bezier(.16, 1, .3, 1) }
+@keyframes enter { from { clip-path: inset(0 0 100% 0) } to { clip-path: inset(0) } }
+
+.victory { position: fixed; inset: 0; z-index: 20; overflow: hidden; display: grid; place-items: center; color: var(--floor) }
+.strip { position: relative }
+.link { display: inline-flex; align-items: center; gap: calc(.8 * var(--u)); font-size: calc(2.5 * var(--u)); white-space: nowrap }
+.link i { width: calc(1.7 * var(--u)); height: calc(1.7 * var(--u)); border-radius: 50%; background: var(--ok); animation: beat 2s ease-in-out infinite }
+.link[data-state="unstable"], .link[data-state="connecting"] { color: var(--warn) }
+.link[data-state="unstable"] i, .link[data-state="connecting"] i { background: var(--warn); animation-duration: .7s }
+.link[data-state="lost"] i { background: var(--tape); animation: none }
+@keyframes beat { 50% { opacity: .35 } }
+.alert { position: absolute; inset: 0; z-index: 3; display: flex; align-items: center; gap: calc(2 * var(--u)); padding-inline: calc(2.4 * var(--u)); background: var(--lost); color: var(--tape); font-size: calc(3.2 * var(--u)); font-weight: 700 }
+.alert[hidden] { display: none }
+.alert span { font-weight: 500; font-size: calc(2.5 * var(--u)) }
+
+#snow { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 6; pointer-events: none }
+#snow[hidden], .garland[hidden] { display: none }
+.garland { position: fixed; top: env(safe-area-inset-top, 0px); left: 0; right: 0; z-index: 7; height: calc(3.2 * var(--u)); display: flex; justify-content: space-between; padding-inline: calc(.8 * var(--u)); pointer-events: none; border-top: 2px solid #2f6b55 }
+.garland i { width: calc(1.1 * var(--u)); height: calc(1.5 * var(--u)); border-radius: 50% 50% 50% 50% / 42% 42% 58% 58%; background: var(--c); transform: translateY(var(--y)); animation: twinkle 2.4s var(--d) ease-in-out infinite }
+@keyframes twinkle { 50% { opacity: .35 } }
+:root[data-season="noel"] .hall { padding-block-start: calc(4 * var(--u)) }
+:root[data-season="noel"] .court::before { content: ""; position: absolute; inset: 0 0 auto; height: calc(1.5 * var(--u)); z-index: 1; pointer-events: none;
+  background: radial-gradient(circle at 50% 0, var(--tape) 66%, transparent 69%) 0 0 / calc(3.2 * var(--u)) calc(1.5 * var(--u)) repeat-x }
+:root[data-season="noel"] .top { padding-block-start: calc(.5 * var(--u)) }
+:root[data-season="noel"] .call.first { background: var(--club); color: var(--tape) }
+
+.deer { display: block; aspect-ratio: 240 / 250; color: inherit; flex: none }
+.strip .deer { height: calc(8.4 * var(--u)); margin-left: calc(-1 * var(--u)) }
+.freeDeer { position: absolute; left: 8%; right: 8%; top: 20%; width: 84%; height: auto; color: var(--tape); opacity: .22 }
+.court .freeMark { place-items: end center; padding-bottom: calc(9 * var(--u)) }
+
+.startForm { position: fixed; inset: 0; z-index: 30; background: var(--floor); display: grid; align-content: center; justify-items: center; gap: calc(2.2 * var(--u));
+  padding-inline: max(16px, env(safe-area-inset-left, 0px)) max(16px, env(safe-area-inset-right, 0px)); overflow: auto }
+.startForm .deer { height: calc(17 * var(--u)) }
+.startForm h1 { font-size: calc(6 * var(--u)); line-height: 1; margin: 0; text-transform: uppercase }
+.field { display: grid; gap: calc(1 * var(--u)); width: min(calc(90 * var(--u)), 100%); font-size: calc(2.6 * var(--u)); border: 0; padding: 0; margin: 0; min-width: 0 }
+.field input[type="text"], .field input[type="number"] { font: inherit; font-size: calc(3.2 * var(--u)); color: var(--floor); background: var(--tape); border: 0; padding: calc(1.2 * var(--u)) calc(1.6 * var(--u)); width: 100% }
+.field legend { padding: 0; margin-bottom: calc(.6 * var(--u)) }
+.themes { display: flex; flex-wrap: wrap; gap: calc(1 * var(--u)) }
+.themes label { display: inline-flex; align-items: center; gap: calc(.7 * var(--u)); background: var(--mat); padding: calc(.8 * var(--u)) calc(1.8 * var(--u)); cursor: pointer }
+.themes input { width: calc(2 * var(--u)); height: calc(2 * var(--u)); accent-color: var(--star) }
+.startForm button, .menu { font: inherit; font-weight: 700; cursor: pointer; border: 0 }
+.startForm button { font-size: calc(3.4 * var(--u)); background: var(--star); color: var(--floor); padding: calc(1 * var(--u)) calc(5 * var(--u)) }
+.startForm :focus-visible, .menu:focus-visible { outline: 3px solid var(--star); outline-offset: 3px }
+.startError { margin: 0; color: var(--warn); font-size: calc(2.6 * var(--u)) }
+.menu { position: fixed; right: calc(1.6 * var(--u)); bottom: calc(1.6 * var(--u)); z-index: 25; background: var(--tape); color: var(--floor); padding: calc(.7 * var(--u)) calc(1.6 * var(--u)); font-size: calc(2.4 * var(--u)) }
+
+.victory[hidden] { display: none }
+.victory::before { content: ""; position: absolute; inset: 0; background: var(--star); clip-path: circle(0 at 50% 46%); animation: gold .9s .52s cubic-bezier(.16, 1, .3, 1) forwards }
+@keyframes gold { to { clip-path: circle(130% at 50% 46%) } }
+.victory.out { animation: leave .7s cubic-bezier(.7, 0, .84, 0) forwards }
+@keyframes leave { to { clip-path: inset(0 0 100% 0) } }
+.v-bg { position: absolute; left: 50%; top: 50%; height: 150%; color: #f7bf1e; translate: -50% -50%; animation: loom 7s .5s cubic-bezier(.16, 1, .3, 1) both }
+@keyframes loom { from { opacity: 0; scale: .8 } 20% { opacity: 1 } to { opacity: 1; scale: 1.08 } }
+.v-deer { height: calc(25 * var(--u)); color: var(--floor); animation: charge .75s .56s cubic-bezier(.16, 1, .3, 1) both, breathe 3s 1.4s ease-in-out infinite }
+@keyframes charge { from { opacity: 0; transform: scale(3.2); filter: blur(calc(1.4 * var(--u))) } to { opacity: 1; transform: none; filter: blur(0) } }
+@keyframes breathe { 50% { translate: 0 calc(-.7 * var(--u)) } }
+#fx { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1 }
+.v-body { position: relative; z-index: 2; display: grid; justify-items: center; text-align: center; gap: calc(1.4 * var(--u)); padding-inline: calc(4 * var(--u)); max-width: 100% }
+.v-title { margin: 0; display: flex; font-family: var(--stencil); font-weight: 800; font-size: calc(26 * var(--u)); line-height: .86 }
+.v-title span { display: block; opacity: 0; animation: slam .7s calc(.62s + var(--i) * 55ms) cubic-bezier(.16, 1, .3, 1) forwards }
+@keyframes slam { from { opacity: 0; transform: translateY(-35%) scale(2.1); filter: blur(calc(1.6 * var(--u))) } to { opacity: 1; transform: none; filter: blur(0) } }
+.v-names { margin: 0; font-size: calc(8.4 * var(--u)); font-weight: 700; line-height: 1.05; text-transform: uppercase; clip-path: inset(0 100% 0 0); animation: names .8s 1.25s cubic-bezier(.16, 1, .3, 1) forwards }
+@keyframes names { to { clip-path: inset(0 0 0 0) } }
+.v-names.many { font-size: calc(5.4 * var(--u)) }
+.v-names span { display: block }
+.v-line { margin: 0; font-size: calc(4.2 * var(--u)); font-weight: 600; opacity: 0; animation: rise .7s 1.7s cubic-bezier(.16, 1, .3, 1) forwards }
+.v-cheer { margin: calc(.8 * var(--u)) 0 0; background: var(--floor); color: var(--star); font-size: calc(5.6 * var(--u)); font-weight: 700; text-transform: uppercase; padding: calc(.3 * var(--u)) calc(2.4 * var(--u)); opacity: 0; animation: rise .7s 2.1s cubic-bezier(.16, 1, .3, 1) forwards }
+@keyframes rise { from { opacity: 0; transform: translateY(45%) } to { opacity: 1; transform: none } }
+
+@media (max-aspect-ratio: 1/1) {
+  :root { --u: calc(100vw / 86) }
+  body { overflow: auto }
+  .hall { height: auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)) }
+  .strip { flex-wrap: wrap; gap: calc(1.4 * var(--u)) }
+  .floor, .courts, .assembly, .queue { grid-template-columns: minmax(0, 1fr); grid-template-rows: none }
+  .court { aspect-ratio: 61 / 100 }
+  .assembly { order: -1 }
+  .assembly h2 { padding-block: calc(1.6 * var(--u)) }
+  .queue .call + .call { border-left: 0; border-top: 2px solid rgba(255, 255, 255, .28) }
+}
+@media (prefers-reduced-motion: reduce) {
+  .set b.flip, .enter, .pair.win { animation: none }
+  .arc, #fx, #snow { display: none }
+  .link i, .garland i, .slides .track { animation: none }
+  .victory::before { animation: none; clip-path: none }
+  .v-bg, .v-deer { animation: none }
+  .v-title span, .v-names, .v-line, .v-cheer { animation: none; opacity: 1; clip-path: none }
+  .victory.out { animation: none; opacity: 0 }
+  .court { transition: none }
+}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <symbol id="cerf" viewBox="0 0 240 250"><g id="cerfHalf" fill="currentColor">
+    <path fill-rule="evenodd" d="M120 104 L96 104 L84 118 L92 160 L103 214 Q110 236 120 236 Z M100 146 L88 134 L108 141 L110 149 Z M120 216 L108 212 L112 222 L120 226 Z"/>
+    <path d="M82 114 L38 98 Q44 124 60 130 L86 134 Z"/>
+    <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke-width="11" d="M100 102 C96 80 74 80 62 62 C52 46 54 28 64 8"/>
+      <path stroke-width="9" d="M84 82 C72 86 54 84 38 70"/>
+      <path stroke-width="9" d="M62 62 C48 62 32 54 20 36"/>
+      <path stroke-width="8" d="M56 38 C46 34 40 24 38 12"/>
+      <path stroke-width="8" d="M62 34 C72 32 82 26 88 14"/>
+    </g></g>
+    <use href="#cerfHalf" transform="matrix(-1 0 0 1 240 0)"/>
+  </symbol>
+</defs></svg>
+<form class="startForm" id="start" novalidate hidden>
+  <svg class="deer" aria-hidden="true"><use href="#cerf"/></svg>
+  <h1>Écran de salle</h1>
+  <label class="field">Numéro du tournoi ou lien Badnet
+    <input type="text" name="tournament" id="tournament" autocomplete="off" placeholder="51180">
+  </label>
+  <p class="startError" id="startError" role="alert" hidden>Entrez un numéro de tournoi ou un lien Badnet contenant eventid.</p>
+  <label class="field">Nombre de terrains
+    <input type="number" name="courts" min="1" max="12" value="5">
+  </label>
+  <fieldset class="field">
+    <legend>Thème</legend>
+    <div class="themes">
+      <label><input type="radio" name="theme" value="auto" checked> Automatique</label>
+      <label><input type="radio" name="theme" value="classique"> Classique</label>
+      <label><input type="radio" name="theme" value="noel"> Noël</label>
+    </div>
+  </fieldset>
+  <button type="submit">Démarrer</button>
+</form>
+<button class="menu" id="menu" type="button" hidden>Réglages</button>
+<div class="garland" id="garland" aria-hidden="true" hidden></div>
+<canvas id="snow" aria-hidden="true" hidden></canvas>
+<div class="hall" style="--logo: url(/*LOGO*/)">
+  <header class="strip">
+    <div class="logo" role="img" aria-label="Augny Badminton"></div>
+    <svg class="deer" role="img" aria-label="Le cerf, totem du club"><use href="#cerf"/></svg>
+    <div>
+      <h1 id="title"></h1>
+    </div>
+    <div class="right">
+      <span class="drift" id="drift" hidden></span>
+      <span class="link" id="link" data-state="live"><i></i><span id="linkText">En direct</span></span>
+      <span class="clock" id="clock"></span>
+    </div>
+    <div class="alert" id="alert" role="alert" hidden></div>
+  </header>
+  <div class="victory" id="victory" hidden></div>
+  <div class="floor">
+    <main class="courts" id="courts" aria-label="Matchs en cours"></main>
+    <aside class="assembly" aria-label="Point de rassemblement">
+      <h2 id="assemblyTitle">Prochains matchs</h2>
+      <div id="first"></div>
+      <div class="queue" id="queue"></div>
+    </aside>
+  </div>
+</div>
