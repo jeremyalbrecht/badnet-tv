@@ -1,7 +1,7 @@
 // Hall display. It holds no tournament data and no game rules: a data source
-// drives it only through window.EcranSalle (see README.md).
-(() => {
-  const CONFIG = { courts: 5, clubs: ["CSJBAD57", "Cercle St Jean - Badminton"], theme: "auto", ...window.ECRAN_CONFIG };
+// drives it only through the object createScreen returns (see README.md).
+export function createScreen(options = {}) {
+  const CONFIG = { courts: 5, clubs: ["CSJBAD57", "Cercle St Jean - Badminton"], theme: "auto", ...options };
   const STALE_MS = 15000, LOST_MS = 45000;
   const VICTORY_MS = 7200, MAX_VICTORY_WAIT_MS = 120000, MAX_VICTORIES_SHOWN = 3;
   const SOFT_FIT = .88, MIN_FIT = .6, SLIDE_PX_PER_S = 45, SLIDE_PAUSES_S = 5;
@@ -413,7 +413,7 @@
   keepAwake();
   document.fonts?.ready.then(() => { fitAll(document.body); });
 
-  window.EcranSalle = {
+  return {
     courts: CONFIG.courts,
     isOurs,
     setHeader({ title = "", drift = "" }) {
@@ -428,4 +428,4 @@
     setQueue(list, animate = false) { queue = list; renderQueue(animate); },
     heartbeat() { lastData = Date.now(); watchLink(); },
   };
-})();
+}

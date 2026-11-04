@@ -1,8 +1,19 @@
 {
   "name": "ecran-salle",
   "private": true,
+  "type": "module",
   "scripts": {
-    "build": "python3 build.py",
-    "test": "node --test tests/"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "vite": "^8.3.5",
+    "vitest": "^5.0.5"
+  },
+  "dependencies": {
+    "@fontsource/barlow-condensed": "^5.3.0",
+    "@fontsource/big-shoulders-stencil": "^5.3.0"
   }
 }

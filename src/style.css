@@ -1,11 +1,7 @@
-<title>Tapis de Court</title>
-<meta name="claude:viewport-fit-sides" content="cover">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&display=swap">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Stencil:wght@800&display=swap">
-<style>
 /* Layout: the hall from above. Blue courts on a navy floor, assembly point along the right wall. */
 :root {
   color-scheme: dark;
+  --logo: url("../assets/logo.png");
   --floor: #0a1f44; --floor-deep: #071631; --mat: #006fd6; --mat-free: #0f3468;
   --tape: #ffffff; --tape-soft: #cfe5ff; --club: #0080f4; --star: #ffd23f; --ok: #3ddc84; --warn: #ffb020; --lost: #c8102e;
   --stencil: "Big Shoulders Stencil", "Barlow Condensed", "Arial Narrow", sans-serif;
@@ -217,66 +213,3 @@ body { background: var(--floor-deep); color: var(--tape); font-family: var(--lab
   .victory.out { animation: none; opacity: 0 }
   .court { transition: none }
 }
-</style>
-
-<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
-  <symbol id="cerf" viewBox="0 0 240 250"><g id="cerfHalf" fill="currentColor">
-    <path fill-rule="evenodd" d="M120 104 L96 104 L84 118 L92 160 L103 214 Q110 236 120 236 Z M100 146 L88 134 L108 141 L110 149 Z M120 216 L108 212 L112 222 L120 226 Z"/>
-    <path d="M82 114 L38 98 Q44 124 60 130 L86 134 Z"/>
-    <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-      <path stroke-width="11" d="M100 102 C96 80 74 80 62 62 C52 46 54 28 64 8"/>
-      <path stroke-width="9" d="M84 82 C72 86 54 84 38 70"/>
-      <path stroke-width="9" d="M62 62 C48 62 32 54 20 36"/>
-      <path stroke-width="8" d="M56 38 C46 34 40 24 38 12"/>
-      <path stroke-width="8" d="M62 34 C72 32 82 26 88 14"/>
-    </g></g>
-    <use href="#cerfHalf" transform="matrix(-1 0 0 1 240 0)"/>
-  </symbol>
-</defs></svg>
-<form class="startForm" id="start" novalidate hidden>
-  <svg class="deer" aria-hidden="true"><use href="#cerf"/></svg>
-  <h1>Écran de salle</h1>
-  <label class="field">Numéro du tournoi ou lien Badnet
-    <input type="text" name="tournament" id="tournament" autocomplete="off" placeholder="51180">
-  </label>
-  <p class="startError" id="startError" role="alert" hidden>Entrez un numéro de tournoi ou un lien Badnet contenant eventid.</p>
-  <label class="field">Nombre de terrains
-    <input type="number" name="courts" min="1" max="12" value="5">
-  </label>
-  <fieldset class="field">
-    <legend>Thème</legend>
-    <div class="themes">
-      <label><input type="radio" name="theme" value="auto" checked> Automatique</label>
-      <label><input type="radio" name="theme" value="classique"> Classique</label>
-      <label><input type="radio" name="theme" value="noel"> Noël</label>
-    </div>
-  </fieldset>
-  <button type="submit">Démarrer</button>
-</form>
-<button class="menu" id="menu" type="button" hidden>Réglages</button>
-<div class="garland" id="garland" aria-hidden="true" hidden></div>
-<canvas id="snow" aria-hidden="true" hidden></canvas>
-<div class="hall" style="--logo: url(/*LOGO*/)">
-  <header class="strip">
-    <div class="logo" role="img" aria-label="Augny Badminton"></div>
-    <svg class="deer" role="img" aria-label="Le cerf, totem du club"><use href="#cerf"/></svg>
-    <div>
-      <h1 id="title"></h1>
-    </div>
-    <div class="right">
-      <span class="drift" id="drift" hidden></span>
-      <span class="link" id="link" data-state="live"><i></i><span id="linkText">En direct</span></span>
-      <span class="clock" id="clock"></span>
-    </div>
-    <div class="alert" id="alert" role="alert" hidden></div>
-  </header>
-  <div class="victory" id="victory" hidden></div>
-  <div class="floor">
-    <main class="courts" id="courts" aria-label="Matchs en cours"></main>
-    <aside class="assembly" aria-label="Point de rassemblement">
-      <h2 id="assemblyTitle">Prochains matchs</h2>
-      <div id="first"></div>
-      <div class="queue" id="queue"></div>
-    </aside>
-  </div>
-</div>

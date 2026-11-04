@@ -1,6 +1,6 @@
-const test = require("node:test");
-const assert = require("node:assert");
-const { createTracker, parseSets, parseRow, parsePairHtml } = require("../src/feed.js");
+import assert from "node:assert";
+import { test } from "vitest";
+import { createTracker, parsePairHtml, parseRow, parseSets } from "../src/feed.js";
 
 function harness() {
   const calls = [];

@@ -5,9 +5,14 @@ static page: the TV connects directly to the ScorBad Socket.IO feed, with no ser
 
 ## Use
 
-Open `dist/index.html`, enter the tournament number or Badnet link, the number of
-courts and the theme, then press Démarrer. Settings survive a reload. Move the
-mouse or press Échap to change them. A bookmark also works:
+    npm install
+    npm run dev        # http://localhost:5173
+    npm test
+    npm run build      # writes dist/, the only folder to host
+
+Enter the tournament number or Badnet link, the number of courts and the theme,
+then press Démarrer. Settings survive a reload. Move the mouse or press Échap to
+change them. A bookmark also works:
 
     ?event=51180&terrains=5&theme=auto
 
@@ -15,21 +20,18 @@ Themes are `auto` (Christmas from 1 December to 6 January), `classique` and `noe
 
 ## Develop
 
-    python3 build.py   # writes dist/index.html
-    npm test           # tracker tests, no dependencies
-
 | File | Role |
 |---|---|
-| `src/page.html` | Markup and styles |
-| `src/screen.js` | Display, driven only through `window.EcranSalle` |
+| `index.html`, `src/style.css` | Markup and styles |
+| `src/main.js` | Entry point |
+| `src/screen.js` | Display, driven only through the object `createScreen` returns |
 | `src/feed.js` | Feed connection and match tracking, testable in Node |
 | `src/start.js` | Start screen and settings |
-| `src/preview.js` | Simulation for design previews, never in `dist/` |
+| `src/preview.js` | Simulated tournament, dev server only, never in `dist/` |
 
-`assets/snapshot-raw.json` holds real player names and stays out of git. When it
-is present, `build.py` also writes the local `index.html` preview, with these
-shortcuts: `#noel`, `#classique`, `#coupure`, `#avant`, `#fin`, `#vide`,
-`#forfait`, `#rafale`.
+`preview/data.json` holds real player names and stays out of git. With it, the dev
+server plays a simulated tournament at `/?apercu`, plus these shortcuts:
+`#noel`, `#classique`, `#coupure`, `#avant`, `#fin`, `#vide`, `#forfait`, `#rafale`.
 
 ## Feed
 
@@ -45,7 +47,7 @@ shortcuts: `#noel`, `#classique`, `#coupure`, `#avant`, `#fin`, `#vide`,
 
 ## Data source API
 
-`window.EcranSalle`:
+The object returned by `createScreen`:
 
 | Call | Use |
 |---|---|

@@ -1,7 +1,10 @@
+node_modules/
+dist/
+.DS_Store
 .impeccable/review/
 .impeccable/build/
-.DS_Store
-# Real player names from a past tournament, used only for the preview.
-assets/snapshot-raw.json
-/index.html
 .impeccable/hook.cache.json
+# Real player names from a past tournament, used only by the dev preview.
+assets/snapshot-raw.json
+preview/
+.idea/

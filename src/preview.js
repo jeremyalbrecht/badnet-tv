@@ -1,10 +1,8 @@
-// Preview only, never shipped in dist/: replays a real snapshot through the same
+// Dev only, never in the production build: replays a real snapshot through the same
 // API a live data source will use. Hash shortcuts show each state on demand.
-(() => {
+export function runPreview(screen, { LIVE, QUEUE }) {
   const TARGET = 15, CAP = 21, SETS_TO_WIN = 2, TICK_MS = 1500, TICKS_PER_FINISH = 14, FIRST_FINISH_TICK = 6;
   const CLUB_HOLD_MS = 12000, HOLD_MS = 7000, FREE_MS = 3500, SCORED_COURT = 5;
-  const { LIVE, QUEUE } = window.PREVIEW_DATA;
-  const screen = window.EcranSalle;
   const random = (n) => Math.floor(Math.random() * n);
   const mode = location.hash.slice(1);
 
@@ -89,5 +87,4 @@
 
   screen.heartbeat();
   setInterval(tick, TICK_MS);
-  window.__preview = { courts, finish };
-})();
+}
