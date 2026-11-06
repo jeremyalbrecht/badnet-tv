@@ -3,6 +3,14 @@
 Hall display for Badnet tournaments, in Augny Badminton colours. It is a single
 static page: the TV connects directly to the ScorBad Socket.IO feed, with no server.
 
+![Hall screen during a tournament](docs/ecran-classique.png)
+
+| Christmas theme | Start screen |
+|---|---|
+| ![Hall screen in the Christmas theme](docs/ecran-noel.png) | ![Start screen](docs/demarrage.png) |
+
+Screenshots come from the dev preview, with invented player names.
+
 ## Use
 
     npm install
